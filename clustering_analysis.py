@@ -158,3 +158,61 @@ def run_kmeans_experiments(
                 }
 
     return pd.DataFrame(rows), best_run
+
+def run_agglomerative_experiments(
+    X_scaled: np.ndarray,
+    y_true,
+) -> tuple[pd.DataFrame, dict]:
+
+    rows = []
+    best_run = {"score": -1}
+
+    for n_clusters in [2, 3, 4, 5]:
+
+        for linkage in [
+            "ward",
+            "complete",
+            "average",
+        ]:
+
+            model = AgglomerativeClustering(
+                n_clusters=n_clusters,
+                linkage=linkage,
+            )
+
+            labels = model.fit_predict(X_scaled)
+
+            metrics = evaluate_clusters(
+                labels,
+                y_true,
+                X_scaled,
+            )
+
+            rows.append(
+                {
+                    "algorithm": ALG_AGLOMERATIV,
+                    "n_clusters": n_clusters,
+                    "init": "-",
+                    "linkage": linkage,
+                    "inertia": None,
+                    **metrics,
+                }
+            )
+
+            if (
+                metrics["silhouette"]
+                and metrics["silhouette"]
+                > best_run.get("score", -1)
+            ):
+                best_run = {
+                    "model": model,
+                    "labels": labels,
+                    "score": metrics["silhouette"],
+                    "config": (
+                        f"{ALG_AGLOMERATIV} "
+                        f"k={n_clusters}, "
+                        f"linkage={linkage}"
+                    ),
+                }
+
+    return pd.DataFrame(rows), best_run
