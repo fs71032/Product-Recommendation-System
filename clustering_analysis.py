@@ -216,3 +216,94 @@ def run_agglomerative_experiments(
                 }
 
     return pd.DataFrame(rows), best_run
+
+def plot_elbow(
+    X_scaled: np.ndarray,
+    output_dir: Path,
+) -> None:
+
+    inertias = []
+
+    ks = range(2, 11)
+
+    for k in ks:
+
+        km = KMeans(
+            n_clusters=k,
+            init="k-means++",
+            n_init=10,
+            random_state=RANDOM_STATE,
+        )
+
+        km.fit(X_scaled)
+
+        inertias.append(km.inertia_)
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(list(ks), inertias, marker="o")
+    plt.xlabel("Numri i grupeve (k)")
+    plt.ylabel("Inertia")
+    plt.title("Metoda Elbow - K-Means")
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(output_dir / "elbow_plot.png", dpi=150)
+    plt.close()
+
+
+def plot_experiment_comparison(
+    exp_df: pd.DataFrame,
+    output_dir: Path,
+) -> None:
+
+    plot_df = exp_df.dropna(
+        subset=["silhouette"]
+    ).copy()
+
+    plot_df["label"] = (
+        plot_df["algorithm"]
+        + " k="
+        + plot_df["n_clusters"].astype(str)
+        + " "
+        + plot_df["init"].where(
+            plot_df["init"] != "-",
+            plot_df["linkage"],
+        )
+    )
+
+    fig, axes = plt.subplots(
+        1,
+        2,
+        figsize=(14, 6),
+    )
+
+    sns.barplot(
+        data=plot_df.sort_values(
+            "silhouette",
+            ascending=False,
+        ).head(10),
+        x="silhouette",
+        y="label",
+        hue="algorithm",
+        ax=axes[0],
+        dodge=False,
+    )
+
+    sns.barplot(
+        data=plot_df.sort_values(
+            "adjusted_rand_index",
+            ascending=False,
+        ).head(10),
+        x="adjusted_rand_index",
+        y="label",
+        hue="algorithm",
+        ax=axes[1],
+        dodge=False,
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        output_dir /
+        "experiment_comparison.png",
+        dpi=150,
+    )
+    plt.close()
