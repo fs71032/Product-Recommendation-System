@@ -509,3 +509,68 @@ def write_report(
     )
 
     (RESULTS_DIR / "clustering_report.txt").write_text("\n".join(lines), encoding="utf-8")
+
+def main() -> None:
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+    X, y_binary = load_for_clustering(DATA_PATH)
+    print(f"Mostra: {len(X)} | Etiketat u hoqen para grupimit")
+    print(f"Shperndarja e klasave (vetem per vleresim): {y_binary.value_counts().to_dict()}\n")
+
+    X_scaled = preprocess_features(X)
+
+    print("=== Eksperimente K-Means ===")
+    km_df, best_km = run_kmeans_experiments(X_scaled, y_binary.values)
+
+    print("=== Eksperimente grupim aglomerativ ===")
+    agg_df, best_agg = run_agglomerative_experiments(X_scaled, y_binary.values)
+
+    exp_df = pd.concat([km_df, agg_df], ignore_index=True)
+    exp_df.to_csv(RESULTS_DIR / "clustering_experiments.csv", index=False)
+    print(exp_df.sort_values("silhouette", ascending=False).head(8).to_string(index=False))
+
+    plot_elbow(X_scaled, RESULTS_DIR)
+    plot_experiment_comparison(exp_df, RESULTS_DIR)
+
+    plot_pca_scatter(
+        X_scaled,
+        best_km["labels"],
+        y_binary.values,
+        best_km["config"],
+        "pca_kmeans_best.png",
+        RESULTS_DIR,
+    )
+    plot_pca_scatter(
+        X_scaled,
+        best_agg["labels"],
+        y_binary.values,
+        best_agg["config"],
+        "pca_grupim_aglomerativ.png",
+        RESULTS_DIR,
+    )
+
+    plot_cluster_distribution(best_km["labels"], y_binary.values, ALG_KMEANS, RESULTS_DIR)
+    plot_cluster_distribution(
+        best_agg["labels"], y_binary.values, ALG_AGLOMERATIV, RESULTS_DIR
+    )
+
+    profiles = analyze_cluster_profiles(X, best_km["labels"], RESULTS_DIR)
+
+    write_report(exp_df, best_km, best_agg, profiles, len(X))
+
+    summary = {
+        "n_samples": len(X),
+        "labels_removed_before_clustering": True,
+        "best_silhouette": exp_df.sort_values("silhouette", ascending=False).iloc[0].to_dict(),
+        "best_ari": exp_df.sort_values("adjusted_rand_index", ascending=False).iloc[0].to_dict(),
+        "experiments": exp_df.to_dict(orient="records"),
+    }
+    with open(RESULTS_DIR / "summary.json", "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2, ensure_ascii=False, default=str)
+
+    print(f"\nRezultatet u ruajten ne: {RESULTS_DIR}")
+    print(f"Raporti: {RESULTS_DIR / 'clustering_report.txt'}")
+
+
+if __name__ == "__main__":
+    main()
