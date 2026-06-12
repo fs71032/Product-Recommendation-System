@@ -8,10 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-
 from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.decomposition import PCA
-
 from sklearn.metrics import (
     adjusted_rand_score,
     calinski_harabasz_score,
@@ -42,9 +40,9 @@ ALG_AGLOMERATIV = "Grupim aglomerativ"
 NUMERIC = NUMERIC_FEATURES
 FEATURE_COLS = FEATURE_COLUMNS
 
+
 def evaluate_clusters(labels: np.ndarray, y_true, X_scaled: np.ndarray) -> dict:
     mask = labels >= 0
-
     if mask.sum() < 2 or len(set(labels[mask])) < 2:
         return {
             "silhouette": None,
@@ -60,76 +58,34 @@ def evaluate_clusters(labels: np.ndarray, y_true, X_scaled: np.ndarray) -> dict:
     X_eval = X_scaled[mask]
 
     return {
-        "silhouette": round(
-            silhouette_score(X_eval, labels[mask]), 4
-        ),
-        "adjusted_rand_index": round(
-            adjusted_rand_score(y_eval, labels[mask]), 4
-        ),
+        "silhouette": round(silhouette_score(X_eval, labels[mask]), 4),
+        "adjusted_rand_index": round(adjusted_rand_score(y_eval, labels[mask]), 4),
         "normalized_mutual_info": round(
-            normalized_mutual_info_score(
-                y_eval,
-                labels[mask]
-            ),
-            4,
+            normalized_mutual_info_score(y_eval, labels[mask]), 4
         ),
-        "homogeneity": round(
-            homogeneity_score(
-                y_eval,
-                labels[mask]
-            ),
-            4,
-        ),
-        "completeness": round(
-            completeness_score(
-                y_eval,
-                labels[mask]
-            ),
-            4,
-        ),
-        "v_measure": round(
-            v_measure_score(
-                y_eval,
-                labels[mask]
-            ),
-            4,
-        ),
-        "calinski_harabasz": round(
-            calinski_harabasz_score(
-                X_eval,
-                labels[mask]
-            ),
-            2,
-        ),
+        "homogeneity": round(homogeneity_score(y_eval, labels[mask]), 4),
+        "completeness": round(completeness_score(y_eval, labels[mask]), 4),
+        "v_measure": round(v_measure_score(y_eval, labels[mask]), 4),
+        "calinski_harabasz": round(calinski_harabasz_score(X_eval, labels[mask]), 2),
     }
 
-def run_kmeans_experiments(
-    X_scaled: np.ndarray,
-    y_true,
-) -> tuple[pd.DataFrame, dict]:
 
-    rows = []
-    best_run = {"score": -1}
+def run_kmeans_experiments(
+    X_scaled: np.ndarray, y_true
+) -> tuple[pd.DataFrame, dict]:
+    rows: list[dict] = []
+    best_run: dict = {"score": -1}
 
     for n_clusters in [2, 3, 4, 5, 6]:
-
         for init in ["k-means++", "random"]:
-
             model = KMeans(
                 n_clusters=n_clusters,
                 init=init,
                 n_init=10,
                 random_state=RANDOM_STATE,
             )
-
             labels = model.fit_predict(X_scaled)
-
-            metrics = evaluate_clusters(
-                labels,
-                y_true,
-                X_scaled,
-            )
-
+            metrics = evaluate_clusters(labels, y_true, X_scaled)
             rows.append(
                 {
                     "algorithm": ALG_KMEANS,
@@ -140,54 +96,28 @@ def run_kmeans_experiments(
                     **metrics,
                 }
             )
-
-            if (
-                metrics["silhouette"]
-                and metrics["silhouette"]
-                > best_run.get("score", -1)
-            ):
+            if metrics["silhouette"] and metrics["silhouette"] > best_run.get("score", -1):
                 best_run = {
                     "model": model,
                     "labels": labels,
                     "score": metrics["silhouette"],
-                    "config": (
-                        f"{ALG_KMEANS} "
-                        f"k={n_clusters}, "
-                        f"init={init}"
-                    ),
+                    "config": f"{ALG_KMEANS} k={n_clusters}, init={init}",
                 }
 
     return pd.DataFrame(rows), best_run
 
-def run_agglomerative_experiments(
-    X_scaled: np.ndarray,
-    y_true,
-) -> tuple[pd.DataFrame, dict]:
 
-    rows = []
-    best_run = {"score": -1}
+def run_agglomerative_experiments(
+    X_scaled: np.ndarray, y_true
+) -> tuple[pd.DataFrame, dict]:
+    rows: list[dict] = []
+    best_run: dict = {"score": -1}
 
     for n_clusters in [2, 3, 4, 5]:
-
-        for linkage in [
-            "ward",
-            "complete",
-            "average",
-        ]:
-
-            model = AgglomerativeClustering(
-                n_clusters=n_clusters,
-                linkage=linkage,
-            )
-
+        for linkage in ["ward", "complete", "average"]:
+            model = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage)
             labels = model.fit_predict(X_scaled)
-
-            metrics = evaluate_clusters(
-                labels,
-                y_true,
-                X_scaled,
-            )
-
+            metrics = evaluate_clusters(labels, y_true, X_scaled)
             rows.append(
                 {
                     "algorithm": ALG_AGLOMERATIV,
@@ -198,45 +128,23 @@ def run_agglomerative_experiments(
                     **metrics,
                 }
             )
-
-            if (
-                metrics["silhouette"]
-                and metrics["silhouette"]
-                > best_run.get("score", -1)
-            ):
+            if metrics["silhouette"] and metrics["silhouette"] > best_run.get("score", -1):
                 best_run = {
                     "model": model,
                     "labels": labels,
                     "score": metrics["silhouette"],
-                    "config": (
-                        f"{ALG_AGLOMERATIV} "
-                        f"k={n_clusters}, "
-                        f"linkage={linkage}"
-                    ),
+                    "config": f"{ALG_AGLOMERATIV} k={n_clusters}, linkage={linkage}",
                 }
 
     return pd.DataFrame(rows), best_run
 
-def plot_elbow(
-    X_scaled: np.ndarray,
-    output_dir: Path,
-) -> None:
 
+def plot_elbow(X_scaled: np.ndarray, output_dir: Path) -> None:
     inertias = []
-
     ks = range(2, 11)
-
     for k in ks:
-
-        km = KMeans(
-            n_clusters=k,
-            init="k-means++",
-            n_init=10,
-            random_state=RANDOM_STATE,
-        )
-
+        km = KMeans(n_clusters=k, init="k-means++", n_init=10, random_state=RANDOM_STATE)
         km.fit(X_scaled)
-
         inertias.append(km.inertia_)
 
     plt.figure(figsize=(8, 5))
@@ -249,64 +157,6 @@ def plot_elbow(
     plt.savefig(output_dir / "elbow_plot.png", dpi=150)
     plt.close()
 
-
-def plot_experiment_comparison(
-    exp_df: pd.DataFrame,
-    output_dir: Path,
-) -> None:
-
-    plot_df = exp_df.dropna(
-        subset=["silhouette"]
-    ).copy()
-
-    plot_df["label"] = (
-        plot_df["algorithm"]
-        + " k="
-        + plot_df["n_clusters"].astype(str)
-        + " "
-        + plot_df["init"].where(
-            plot_df["init"] != "-",
-            plot_df["linkage"],
-        )
-    )
-
-    fig, axes = plt.subplots(
-        1,
-        2,
-        figsize=(14, 6),
-    )
-
-    sns.barplot(
-        data=plot_df.sort_values(
-            "silhouette",
-            ascending=False,
-        ).head(10),
-        x="silhouette",
-        y="label",
-        hue="algorithm",
-        ax=axes[0],
-        dodge=False,
-    )
-
-    sns.barplot(
-        data=plot_df.sort_values(
-            "adjusted_rand_index",
-            ascending=False,
-        ).head(10),
-        x="adjusted_rand_index",
-        y="label",
-        hue="algorithm",
-        ax=axes[1],
-        dodge=False,
-    )
-
-    plt.tight_layout()
-    plt.savefig(
-        output_dir /
-        "experiment_comparison.png",
-        dpi=150,
-    )
-    plt.close()
 
 def plot_pca_scatter(
     X_scaled: np.ndarray,
@@ -404,7 +254,8 @@ def plot_experiment_comparison(exp_df: pd.DataFrame, output_dir: Path) -> None:
     plt.savefig(output_dir / "experiment_comparison.png", dpi=150)
     plt.close()
 
-    def analyze_cluster_profiles(
+
+def analyze_cluster_profiles(
     X: pd.DataFrame, cluster_labels: np.ndarray, output_dir: Path
 ) -> pd.DataFrame:
     profile = X.copy()
@@ -509,6 +360,7 @@ def write_report(
     )
 
     (RESULTS_DIR / "clustering_report.txt").write_text("\n".join(lines), encoding="utf-8")
+
 
 def main() -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
