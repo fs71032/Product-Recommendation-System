@@ -58,3 +58,47 @@ FEATURE_SETS: dict[str, list[str]] = {
         "main_category",
     ],
 }
+
+
+NN_ARCHITECTURES: dict[str, dict] = {
+    "NN - 2 shtresa (64, 32)": {
+        "hidden_layer_sizes": (64, 32),
+        "activation": "relu",
+        "description": (
+            "Hyrje -> Shtresa e fshehur 1 (64 neurone, ReLU) -> "
+            "Shtresa e fshehur 2 (32 neurone, ReLU) -> "
+            "Dalje (1 neuron, Sigmoid)"
+        ),
+    },
+    "NN - 3 shtresa (128, 64, 32)": {
+        "hidden_layer_sizes": (128, 64, 32),
+        "activation": "relu",
+        "description": (
+            "Hyrje -> Shtresa e fshehur 1 (128 neurone, ReLU) -> "
+            "Shtresa e fshehur 2 (64 neurone, ReLU) -> "
+            "Shtresa e fshehur 3 (32 neurone, ReLU) -> "
+            "Dalje (1 neuron, Sigmoid)"
+        ),
+    },
+}
+
+
+def build_preprocessor(feature_cols: list[str]) -> ColumnTransformer:
+    numeric = [c for c in feature_cols if c in NUMERIC_ALL]
+    categorical = [c for c in feature_cols if c in CATEGORICAL]
+
+    transformers: list = []
+    if numeric:
+        transformers.append(("num", StandardScaler(), numeric))
+    if categorical:
+        transformers.append(
+            (
+                "cat",
+                OneHotEncoder(handle_unknown="ignore", sparse_output=False),
+                categorical,
+            )
+        )
+            return ColumnTransformer(transformers=transformers)
+
+
+    return ColumnTransformer(transformers=transformers)
