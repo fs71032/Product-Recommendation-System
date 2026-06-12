@@ -102,3 +102,59 @@ def evaluate_clusters(labels: np.ndarray, y_true, X_scaled: np.ndarray) -> dict:
             2,
         ),
     }
+
+def run_kmeans_experiments(
+    X_scaled: np.ndarray,
+    y_true,
+) -> tuple[pd.DataFrame, dict]:
+
+    rows = []
+    best_run = {"score": -1}
+
+    for n_clusters in [2, 3, 4, 5, 6]:
+
+        for init in ["k-means++", "random"]:
+
+            model = KMeans(
+                n_clusters=n_clusters,
+                init=init,
+                n_init=10,
+                random_state=RANDOM_STATE,
+            )
+
+            labels = model.fit_predict(X_scaled)
+
+            metrics = evaluate_clusters(
+                labels,
+                y_true,
+                X_scaled,
+            )
+
+            rows.append(
+                {
+                    "algorithm": ALG_KMEANS,
+                    "n_clusters": n_clusters,
+                    "init": init,
+                    "linkage": "-",
+                    "inertia": round(model.inertia_, 2),
+                    **metrics,
+                }
+            )
+
+            if (
+                metrics["silhouette"]
+                and metrics["silhouette"]
+                > best_run.get("score", -1)
+            ):
+                best_run = {
+                    "model": model,
+                    "labels": labels,
+                    "score": metrics["silhouette"],
+                    "config": (
+                        f"{ALG_KMEANS} "
+                        f"k={n_clusters}, "
+                        f"init={init}"
+                    ),
+                }
+
+    return pd.DataFrame(rows), best_run
