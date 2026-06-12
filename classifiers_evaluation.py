@@ -45,3 +45,16 @@ CV_FOLDS = 5
 
 NUMERIC_ALL = NUMERIC_FEATURES
 CATEGORICAL = CATEGORICAL_FEATURES
+
+
+FEATURE_SETS: dict[str, list[str]] = {
+    "te_gjitha_veçorite": NUMERIC_ALL + CATEGORICAL,
+    "vetem_numerike": NUMERIC_ALL.copy(),
+    "cmime_dhe_zbritje": ["actual_price_num", "discounted_price_num", "discount_pct"],
+    "pa_numrin_vleresimeve": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "main_category",
+    ],
+}
