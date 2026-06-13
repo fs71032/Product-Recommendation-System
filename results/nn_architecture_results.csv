@@ -1,0 +1,3 @@
+classifier,type,architecture,hidden_layers,n_hidden_layers,units_per_layer,activation,accuracy,precision,recall,f1_score
+"NN - 2 shtresa (64, 32)",Neural Network,"Hyrje -> Shtresa e fshehur 1 (64 neurone, ReLU) -> Shtresa e fshehur 2 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)","(64, 32)",2,"(64, 32)",relu,0.7645,0.7684,0.9865,0.8639
+"NN - 3 shtresa (128, 64, 32)",Neural Network,"Hyrje -> Shtresa e fshehur 1 (128 neurone, ReLU) -> Shtresa e fshehur 2 (64 neurone, ReLU) -> Shtresa e fshehur 3 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)","(128, 64, 32)",3,"(128, 64, 32)",relu,0.7611,0.7603,1.0,0.8638

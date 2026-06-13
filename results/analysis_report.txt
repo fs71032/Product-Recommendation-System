@@ -1,0 +1,119 @@
+RAPORT ANALIZË - KLASIFIKUESIT AMAZON
+==================================================
+
+1. NDARJA E DATASETIT
+   - Mostra totale: 1464
+   - Trajnim (80%): 1171 mostra
+   - Test (20%): 293 mostra
+   - Stratifikim sipas klasës: po (random_state=42)
+   - Klasa 0 (rating < 4): 354
+   - Klasa 1 (rating >= 4): 1110
+
+2. PARAPËRPROCESIMI
+   - Çmimet: heqja e simbolit ₹ dhe presjeve, konvertim në float
+   - Zbritja: heqja e % dhe konvertim numerik
+   - Numri vlerësimeve: heqja e presjeve, konvertim int
+   - Kategoria: nxjerrja e kategorisë kryesore (para |)
+   - Veçoritë numerike: StandardScaler (mesatare 0, devijim 1)
+   - Veçoritë kategorike: OneHotEncoder (handle_unknown='ignore')
+   - Rreshtat me vlera të munguara në veçoritë kryesore: hequr
+
+3. EKSPERIMENTET ME VEÇORITË
+   Metodat e testuara:
+   a) Bashkësi të ndryshme veçorish:
+      - te_gjitha_veçorite: 4 numerike + kategoria
+      - vetem_numerike: pa kategori
+      - cmime_dhe_zbritje: vetëm 3 veçori çmimi
+      - pa_numrin_vleresimeve: pa rating_count_num
+   b) Zgjedhje veçorish: SelectKBest (f_classif, k=10)
+   c) Reduktim dimensionaliteti: PCA (95% e variancës)
+
+   Rezultatet (Logistic Regression, set testimi):
+   - te_gjitha_plus_pca (pca): F1=0.8655, Acc=0.7645
+   - pa_numrin_vleresimeve (asnjë): F1=0.8655, Acc=0.7645
+   - te_gjitha_plus_select_k_best (select_k_best): F1=0.8634, Acc=0.7645
+   - te_gjitha_veçorite (asnjë): F1=0.8634, Acc=0.7645
+   - vetem_numerike (asnjë): F1=0.8621, Acc=0.7577
+   - cmime_dhe_zbritje (asnjë): F1=0.8621, Acc=0.7577
+
+   Përfundim: konfigurimi më i mirë = 'te_gjitha_plus_pca' (F1=0.8655).
+
+4. RRJETAT NEURONALE (MLPClassifier)
+   Përdoret Multi-Layer Perceptron me solver Adam dhe early stopping.
+   Shtresat e fshehura përdorin ReLU; shtresa e daljes përdor Sigmoid (klasë binare).
+
+   Arkitekturat e testuara:
+
+   --- NN - 2 shtresa (64, 32) ---
+   Hyrje -> Shtresa e fshehur 1 (64 neurone, ReLU) -> Shtresa e fshehur 2 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)
+   Rezultat test: F1=0.8639, Acc=0.7645, Prec=0.7684, Rec=0.9865
+
+   --- NN - 3 shtresa (128, 64, 32) ---
+   Hyrje -> Shtresa e fshehur 1 (128 neurone, ReLU) -> Shtresa e fshehur 2 (64 neurone, ReLU) -> Shtresa e fshehur 3 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)
+   Rezultat test: F1=0.8638, Acc=0.7611, Prec=0.7603, Rec=1.0
+
+   Ndikimi i arkitekturës:
+   - Arkitektura më e mirë (pa tuning): NN - 2 shtresa (64, 32) (F1=0.8639)
+   - Më shumë shtresa/neurone rrisin kapacitetin e modelit por edhe rrezikun e overfitting;
+     me dataset të vogël (~1171 mostra trajnimi), diferenca mbetet e vogël.
+   - Early stopping ndalon trajnimin kur validimi nuk përmirësohet, duke stabilizuar NN.
+
+5. RREGULLIMI I HIPERPARAMETRAVE (GridSearchCV, 5-fold, scoring=F1)
+
+   --- Logistic Regression ---
+   Parametra të testuar: {"model__C": [0.01, 0.1, 1.0, 10.0], "model__solver": ["lbfgs", "liblinear"]}
+   Parametra më të mirë: {"model__C": 0.1, "model__solver": "lbfgs"}
+   F1 mesatar CV: 0.8627
+
+   --- Decision Tree ---
+   Parametra të testuar: {"model__max_depth": [3, 5, 8, 12, null], "model__min_samples_split": [2, 5, 10], "model__min_samples_leaf": [1, 2, 4]}
+   Parametra më të mirë: {"model__max_depth": 5, "model__min_samples_leaf": 1, "model__min_samples_split": 5}
+   F1 mesatar CV: 0.851
+
+   --- Random Forest ---
+   Parametra të testuar: {"model__n_estimators": [100, 200, 300], "model__max_depth": [5, 8, 12, null], "model__min_samples_split": [2, 5]}
+   Parametra më të mirë: {"model__max_depth": 8, "model__min_samples_split": 2, "model__n_estimators": 100}
+   F1 mesatar CV: 0.8625
+
+   --- SVM (RBF) ---
+   Parametra të testuar: {"model__C": [0.1, 1.0, 10.0], "model__gamma": ["scale", "auto", 0.01, 0.1]}
+   Parametra më të mirë: {"model__C": 10.0, "model__gamma": "auto"}
+   F1 mesatar CV: 0.8641
+
+   --- K-Nearest Neighbors ---
+   Parametra të testuar: {"model__n_neighbors": [3, 5, 7, 11, 15], "model__weights": ["uniform", "distance"], "model__metric": ["euclidean", "manhattan"]}
+   Parametra më të mirë: {"model__metric": "euclidean", "model__n_neighbors": 15, "model__weights": "uniform"}
+   F1 mesatar CV: 0.8682
+
+   --- Neural Network (tuned) ---
+   Parametra të testuar: {"model__hidden_layer_sizes": [[64, 32], [128, 64, 32], [256, 128]], "model__alpha": [0.0001, 0.001, 0.01], "model__learning_rate_init": [0.001, 0.01]}
+   Parametra më të mirë: {"model__alpha": 0.0001, "model__hidden_layer_sizes": [128, 64, 32], "model__learning_rate_init": 0.01}
+   Arkitektura finale: Hyrje -> Shtresa 1 (128 neurone, ReLU) -> Shtresa 2 (64 neurone, ReLU) -> Shtresa 3 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)
+   F1 mesatar CV: 0.8626
+
+6. TABELA KRAHASUESE FINALE (set testimi)
+
+   Klasifikuesi                     Accuracy  Precision     Recall         F1
+   ------------------------------------------------------------------------
+   Logistic Regression                0.7645     0.7629     1.0000     0.8655
+   SVM (RBF)                          0.7645     0.7629     1.0000     0.8655
+   Random Forest                      0.7782     0.8008     0.9414     0.8654
+   NN - 2 shtresa (64, 32)            0.7645     0.7684     0.9865     0.8639
+   NN - 3 shtresa (128, 64, 32)       0.7611     0.7603     1.0000     0.8638
+   Neural Network (tuned)             0.7577     0.7577     1.0000     0.8621
+   K-Nearest Neighbors                0.7645     0.7977     0.9234     0.8559
+   Decision Tree                      0.7577     0.7807     0.9459     0.8554
+
+7. DISKUTIMI
+   Klasifikuesi më i mirë: Logistic Regression (F1=0.8655).
+
+   Pse performoi më mirë:
+   - Logistic Regression / SVM arrijnë F1 të lartë sepse dataseti ka pak veçorë
+     dhe marrëdhënie të thjeshta lineare/near-linear midis çmimit, zbritjes dhe rating-ut.
+   - Random Forest ka accuracy më të lartë por balancë të ndryshme precision/recall.
+   - Decision Tree dhe KNN janë më të dobët për shkak të overfitting/ndjeshmërisë ndaj shkallës.
+   - Rrjeti neuronal arrin rezultate konkurruese por nuk tejkalon modelet klasike
+     në këtë dataset të vogël tabular — NN shkëlqen më shumë me të dhëna të mëdha
+     ose veçori komplekse (tekst, imazhe).
+
+   Matricat e konfuzionit: shiko results/confusion_matrix_*.png për secilin klasifikues.

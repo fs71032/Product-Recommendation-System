@@ -1,0 +1,7 @@
+feature_config,reduction_method,n_raw_features,accuracy,precision,recall,f1_score
+te_gjitha_plus_pca,pca,5,0.7645,0.7629,1.0,0.8655
+pa_numrin_vleresimeve,asnjë,4,0.7645,0.7629,1.0,0.8655
+te_gjitha_plus_select_k_best,select_k_best,5,0.7645,0.7703,0.982,0.8634
+te_gjitha_veçorite,asnjë,5,0.7645,0.7703,0.982,0.8634
+vetem_numerike,asnjë,4,0.7577,0.7577,1.0,0.8621
+cmime_dhe_zbritje,asnjë,3,0.7577,0.7577,1.0,0.8621

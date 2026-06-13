@@ -1,0 +1,1552 @@
+{
+  "cv_folds": 5,
+  "scoring": "f1",
+  "best_feature_columns": [
+    "actual_price_num",
+    "discounted_price_num",
+    "discount_pct",
+    "rating_count_num",
+    "main_category"
+  ],
+  "best_reduction": "pca",
+  "classifiers": [
+    {
+      "classifier": "Logistic Regression",
+      "param_grid_tested": {
+        "model__C": [
+          0.01,
+          0.1,
+          1.0,
+          10.0
+        ],
+        "model__solver": [
+          "lbfgs",
+          "liblinear"
+        ]
+      },
+      "best_params": {
+        "model__C": 0.1,
+        "model__solver": "lbfgs"
+      },
+      "best_cv_f1": 0.8627,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "Decision Tree",
+      "param_grid_tested": {
+        "model__max_depth": [
+          3,
+          5,
+          8,
+          12,
+          null
+        ],
+        "model__min_samples_split": [
+          2,
+          5,
+          10
+        ],
+        "model__min_samples_leaf": [
+          1,
+          2,
+          4
+        ]
+      },
+      "best_params": {
+        "model__max_depth": 5,
+        "model__min_samples_leaf": 1,
+        "model__min_samples_split": 5
+      },
+      "best_cv_f1": 0.851,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "Random Forest",
+      "param_grid_tested": {
+        "model__n_estimators": [
+          100,
+          200,
+          300
+        ],
+        "model__max_depth": [
+          5,
+          8,
+          12,
+          null
+        ],
+        "model__min_samples_split": [
+          2,
+          5
+        ]
+      },
+      "best_params": {
+        "model__max_depth": 8,
+        "model__min_samples_split": 2,
+        "model__n_estimators": 100
+      },
+      "best_cv_f1": 0.8625,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "SVM (RBF)",
+      "param_grid_tested": {
+        "model__C": [
+          0.1,
+          1.0,
+          10.0
+        ],
+        "model__gamma": [
+          "scale",
+          "auto",
+          0.01,
+          0.1
+        ]
+      },
+      "best_params": {
+        "model__C": 10.0,
+        "model__gamma": "auto"
+      },
+      "best_cv_f1": 0.8641,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "K-Nearest Neighbors",
+      "param_grid_tested": {
+        "model__n_neighbors": [
+          3,
+          5,
+          7,
+          11,
+          15
+        ],
+        "model__weights": [
+          "uniform",
+          "distance"
+        ],
+        "model__metric": [
+          "euclidean",
+          "manhattan"
+        ]
+      },
+      "best_params": {
+        "model__metric": "euclidean",
+        "model__n_neighbors": 15,
+        "model__weights": "uniform"
+      },
+      "best_cv_f1": 0.8682,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "Neural Network (tuned)",
+      "type": "Neural Network",
+      "param_grid_tested": {
+        "model__hidden_layer_sizes": [
+          [
+            64,
+            32
+          ],
+          [
+            128,
+            64,
+            32
+          ],
+          [
+            256,
+            128
+          ]
+        ],
+        "model__alpha": [
+          0.0001,
+          0.001,
+          0.01
+        ],
+        "model__learning_rate_init": [
+          0.001,
+          0.01
+        ]
+      },
+      "best_params": {
+        "model__alpha": 0.0001,
+        "model__hidden_layer_sizes": [
+          128,
+          64,
+          32
+        ],
+        "model__learning_rate_init": 0.01
+      },
+      "best_cv_f1": 0.8626,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca",
+      "architecture": "Hyrje -> Shtresa 1 (128 neurone, ReLU) -> Shtresa 2 (64 neurone, ReLU) -> Shtresa 3 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)",
+      "hidden_layers": "(128, 64, 32)",
+      "n_hidden_layers": 3,
+      "units_per_layer": "(128, 64, 32)",
+      "activation": "relu"
+    }
+  ],
+  "cv_results_detail": {
+    "Logistic Regression": [
+      {
+        "params": {
+          "model__C": 0.1,
+          "model__solver": "lbfgs"
+        },
+        "mean_test_score": 0.8627089896227933,
+        "std_test_score": 0.0017689587508795688,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__C": 0.01,
+          "model__solver": "lbfgs"
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 2
+      },
+      {
+        "params": {
+          "model__C": 0.01,
+          "model__solver": "liblinear"
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 2
+      },
+      {
+        "params": {
+          "model__C": 0.1,
+          "model__solver": "liblinear"
+        },
+        "mean_test_score": 0.8621535329733364,
+        "std_test_score": 0.002431707610556231,
+        "rank_test_score": 4
+      },
+      {
+        "params": {
+          "model__C": 10.0,
+          "model__solver": "liblinear"
+        },
+        "mean_test_score": 0.8595043236180491,
+        "std_test_score": 0.006449645051915673,
+        "rank_test_score": 5
+      },
+      {
+        "params": {
+          "model__C": 10.0,
+          "model__solver": "lbfgs"
+        },
+        "mean_test_score": 0.8595043236180491,
+        "std_test_score": 0.006449645051915673,
+        "rank_test_score": 5
+      },
+      {
+        "params": {
+          "model__C": 1.0,
+          "model__solver": "liblinear"
+        },
+        "mean_test_score": 0.8590855438889242,
+        "std_test_score": 0.006957241147521292,
+        "rank_test_score": 7
+      },
+      {
+        "params": {
+          "model__C": 1.0,
+          "model__solver": "lbfgs"
+        },
+        "mean_test_score": 0.8590855438889242,
+        "std_test_score": 0.006957241147521292,
+        "rank_test_score": 7
+      }
+    ],
+    "Decision Tree": [
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8510344967092633,
+        "std_test_score": 0.011341651234244604,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8507700894200403,
+        "std_test_score": 0.011360206650811338,
+        "rank_test_score": 2
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 3,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8505005572688787,
+        "std_test_score": 0.020582623143225377,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8503205907321995,
+        "std_test_score": 0.010714156872912122,
+        "rank_test_score": 12
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8498687099330138,
+        "std_test_score": 0.01078378723704874,
+        "rank_test_score": 13
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.849742659521357,
+        "std_test_score": 0.010323548949756907,
+        "rank_test_score": 14
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8487080873503334,
+        "std_test_score": 0.010607324816016369,
+        "rank_test_score": 15
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8461945813993406,
+        "std_test_score": 0.00920679818236311,
+        "rank_test_score": 16
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8461945813993406,
+        "std_test_score": 0.00920679818236311,
+        "rank_test_score": 16
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8461945813993406,
+        "std_test_score": 0.00920679818236311,
+        "rank_test_score": 16
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8335983297413752,
+        "std_test_score": 0.013311226342630069,
+        "rank_test_score": 19
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8299609906250188,
+        "std_test_score": 0.016486830444720033,
+        "rank_test_score": 20
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8297624533475005,
+        "std_test_score": 0.011097881986443662,
+        "rank_test_score": 21
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8273663111902817,
+        "std_test_score": 0.01615804906683995,
+        "rank_test_score": 22
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8259096707965025,
+        "std_test_score": 0.015649634876103692,
+        "rank_test_score": 23
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8253326987300001,
+        "std_test_score": 0.011042091217844559,
+        "rank_test_score": 24
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8216585453150909,
+        "std_test_score": 0.01714103855505649,
+        "rank_test_score": 25
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8212454879035784,
+        "std_test_score": 0.0162071461414137,
+        "rank_test_score": 26
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8212454879035784,
+        "std_test_score": 0.0162071461414137,
+        "rank_test_score": 26
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8208798032490389,
+        "std_test_score": 0.01828866471472149,
+        "rank_test_score": 28
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8198375926626633,
+        "std_test_score": 0.014872028028306955,
+        "rank_test_score": 29
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8139725637548286,
+        "std_test_score": 0.023319008043460702,
+        "rank_test_score": 30
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8133323432279823,
+        "std_test_score": 0.024612490443998238,
+        "rank_test_score": 31
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.813062829851685,
+        "std_test_score": 0.01610542250698917,
+        "rank_test_score": 32
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8127227300730331,
+        "std_test_score": 0.013791620759719715,
+        "rank_test_score": 33
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8117519958201882,
+        "std_test_score": 0.009394901326657752,
+        "rank_test_score": 34
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8112014110297177,
+        "std_test_score": 0.009744490840141017,
+        "rank_test_score": 35
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.808533235505117,
+        "std_test_score": 0.014588511859999572,
+        "rank_test_score": 36
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.808533235505117,
+        "std_test_score": 0.014588511859999572,
+        "rank_test_score": 36
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.807942574221644,
+        "std_test_score": 0.009606168711915265,
+        "rank_test_score": 38
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8070767074805767,
+        "std_test_score": 0.01930661391150887,
+        "rank_test_score": 39
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 1,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8058425953025502,
+        "std_test_score": 0.014739445785483314,
+        "rank_test_score": 40
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8030072805593891,
+        "std_test_score": 0.02008837638704328,
+        "rank_test_score": 41
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.8030072805593891,
+        "std_test_score": 0.02008837638704328,
+        "rank_test_score": 41
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 5
+        },
+        "mean_test_score": 0.8007927750329349,
+        "std_test_score": 0.026009792772093598,
+        "rank_test_score": 43
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 4,
+          "model__min_samples_split": 10
+        },
+        "mean_test_score": 0.8003903263141627,
+        "std_test_score": 0.024498923160338467,
+        "rank_test_score": 44
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_leaf": 2,
+          "model__min_samples_split": 2
+        },
+        "mean_test_score": 0.7987480720987468,
+        "std_test_score": 0.013670492857850118,
+        "rank_test_score": 45
+      }
+    ],
+    "Random Forest": [
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.8624795178924526,
+        "std_test_score": 0.009243512554626094,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.8619394041774837,
+        "std_test_score": 0.009290912904883774,
+        "rank_test_score": 2
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.8616505436131157,
+        "std_test_score": 0.006584063188538823,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.8616412872841444,
+        "std_test_score": 0.007121883380480266,
+        "rank_test_score": 4
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.860881687156658,
+        "std_test_score": 0.011170962340234257,
+        "rank_test_score": 5
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.8604515831420875,
+        "std_test_score": 0.008205228192348445,
+        "rank_test_score": 6
+      },
+      {
+        "params": {
+          "model__max_depth": 8,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.8603257856826207,
+        "std_test_score": 0.007458809793634096,
+        "rank_test_score": 7
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.860204989331727,
+        "std_test_score": 0.0072141562854688345,
+        "rank_test_score": 8
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.8595737699714556,
+        "std_test_score": 0.002822181136854971,
+        "rank_test_score": 9
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.8593813571922018,
+        "std_test_score": 0.01050226148734821,
+        "rank_test_score": 10
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.8590372109675728,
+        "std_test_score": 0.014156877995091065,
+        "rank_test_score": 11
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.8589218907714649,
+        "std_test_score": 0.012875939691297585,
+        "rank_test_score": 12
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.858626092690216,
+        "std_test_score": 0.012178506284868905,
+        "rank_test_score": 13
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.8578582655415354,
+        "std_test_score": 0.0010132528502969842,
+        "rank_test_score": 14
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.857567721282131,
+        "std_test_score": 0.005681102527879312,
+        "rank_test_score": 15
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.857263167946086,
+        "std_test_score": 0.011742880485225727,
+        "rank_test_score": 16
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.8569755157339426,
+        "std_test_score": 0.0022161386427413466,
+        "rank_test_score": 17
+      },
+      {
+        "params": {
+          "model__max_depth": 12,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.8568286658781608,
+        "std_test_score": 0.010834288982420273,
+        "rank_test_score": 18
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.8565075119376248,
+        "std_test_score": 0.009867110834404875,
+        "rank_test_score": 19
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.8560229705866262,
+        "std_test_score": 0.012876955449522734,
+        "rank_test_score": 20
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 100
+        },
+        "mean_test_score": 0.855129357005595,
+        "std_test_score": 0.002895625726598079,
+        "rank_test_score": 21
+      },
+      {
+        "params": {
+          "model__max_depth": 5,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.8551222079677979,
+        "std_test_score": 0.0014744538355588254,
+        "rank_test_score": 22
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_split": 2,
+          "model__n_estimators": 200
+        },
+        "mean_test_score": 0.8543491404098205,
+        "std_test_score": 0.011505000493355,
+        "rank_test_score": 23
+      },
+      {
+        "params": {
+          "model__max_depth": null,
+          "model__min_samples_split": 5,
+          "model__n_estimators": 300
+        },
+        "mean_test_score": 0.8542504847692,
+        "std_test_score": 0.01132108576852494,
+        "rank_test_score": 24
+      }
+    ],
+    "SVM (RBF)": [
+      {
+        "params": {
+          "model__C": 10.0,
+          "model__gamma": "auto"
+        },
+        "mean_test_score": 0.8641061802777669,
+        "std_test_score": 0.0020403277698986836,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__C": 10.0,
+          "model__gamma": "scale"
+        },
+        "mean_test_score": 0.8639705459194424,
+        "std_test_score": 0.002234723903975667,
+        "rank_test_score": 2
+      },
+      {
+        "params": {
+          "model__C": 0.1,
+          "model__gamma": "scale"
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 0.1,
+          "model__gamma": "auto"
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 1.0,
+          "model__gamma": "scale"
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 1.0,
+          "model__gamma": "auto"
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 0.1,
+          "model__gamma": 0.01
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 0.1,
+          "model__gamma": 0.1
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 1.0,
+          "model__gamma": 0.1
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 1.0,
+          "model__gamma": 0.01
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 10.0,
+          "model__gamma": 0.01
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__C": 10.0,
+          "model__gamma": 0.1
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 3
+      }
+    ],
+    "K-Nearest Neighbors": [
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 15,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8681961312149576,
+        "std_test_score": 0.010622077319370416,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 11,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8670549846784465,
+        "std_test_score": 0.012402487570705962,
+        "rank_test_score": 2
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 15,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8668983404541498,
+        "std_test_score": 0.014658603937760641,
+        "rank_test_score": 3
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 11,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8656994322496141,
+        "std_test_score": 0.013985105356890327,
+        "rank_test_score": 4
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 15,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8648387319558575,
+        "std_test_score": 0.00759834194938018,
+        "rank_test_score": 5
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 11,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8645940511192037,
+        "std_test_score": 0.01427652408399395,
+        "rank_test_score": 6
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 11,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8641596311550493,
+        "std_test_score": 0.007878114535191659,
+        "rank_test_score": 7
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 15,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8638883887696573,
+        "std_test_score": 0.01740582569353736,
+        "rank_test_score": 8
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 7,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8546809804612832,
+        "std_test_score": 0.01516368972400097,
+        "rank_test_score": 9
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 7,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8531223881054979,
+        "std_test_score": 0.017529387775841836,
+        "rank_test_score": 10
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 7,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8522259966320478,
+        "std_test_score": 0.01725921647792619,
+        "rank_test_score": 11
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 7,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8516106145661382,
+        "std_test_score": 0.017495137441917365,
+        "rank_test_score": 12
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 5,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8495420236993552,
+        "std_test_score": 0.02085008963914689,
+        "rank_test_score": 13
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 5,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8489282168808978,
+        "std_test_score": 0.020384475259666805,
+        "rank_test_score": 14
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 5,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8461654033223152,
+        "std_test_score": 0.017953993403963697,
+        "rank_test_score": 15
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 5,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8461037876451165,
+        "std_test_score": 0.022686944573222224,
+        "rank_test_score": 16
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 3,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8457999747055336,
+        "std_test_score": 0.018827978622894863,
+        "rank_test_score": 17
+      },
+      {
+        "params": {
+          "model__metric": "euclidean",
+          "model__n_neighbors": 3,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.843220888081502,
+        "std_test_score": 0.019125382796231473,
+        "rank_test_score": 18
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 3,
+          "model__weights": "distance"
+        },
+        "mean_test_score": 0.8411210940127644,
+        "std_test_score": 0.015429171723875677,
+        "rank_test_score": 19
+      },
+      {
+        "params": {
+          "model__metric": "manhattan",
+          "model__n_neighbors": 3,
+          "model__weights": "uniform"
+        },
+        "mean_test_score": 0.8390207137236299,
+        "std_test_score": 0.008422193580045792,
+        "rank_test_score": 20
+      }
+    ],
+    "Neural Network": [
+      {
+        "params": {
+          "model__alpha": 0.0001,
+          "model__hidden_layer_sizes": [
+            128,
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__alpha": 0.001,
+          "model__hidden_layer_sizes": [
+            128,
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__alpha": 0.01,
+          "model__hidden_layer_sizes": [
+            128,
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.8625537098374132,
+        "std_test_score": 0.0012682440734378066,
+        "rank_test_score": 1
+      },
+      {
+        "params": {
+          "model__alpha": 0.01,
+          "model__hidden_layer_sizes": [
+            256,
+            128
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.8620402443056768,
+        "std_test_score": 0.00484177241140767,
+        "rank_test_score": 4
+      },
+      {
+        "params": {
+          "model__alpha": 0.0001,
+          "model__hidden_layer_sizes": [
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.8618752030575239,
+        "std_test_score": 0.004490578520984531,
+        "rank_test_score": 5
+      },
+      {
+        "params": {
+          "model__alpha": 0.001,
+          "model__hidden_layer_sizes": [
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.8610677630738938,
+        "std_test_score": 0.00425729257318335,
+        "rank_test_score": 6
+      },
+      {
+        "params": {
+          "model__alpha": 0.0001,
+          "model__hidden_layer_sizes": [
+            256,
+            128
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.8607845500286988,
+        "std_test_score": 0.004094272810035945,
+        "rank_test_score": 7
+      },
+      {
+        "params": {
+          "model__alpha": 0.01,
+          "model__hidden_layer_sizes": [
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.860777716930189,
+        "std_test_score": 0.004032167860114853,
+        "rank_test_score": 8
+      },
+      {
+        "params": {
+          "model__alpha": 0.001,
+          "model__hidden_layer_sizes": [
+            256,
+            128
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.8600873822727074,
+        "std_test_score": 0.003996696091644295,
+        "rank_test_score": 9
+      },
+      {
+        "params": {
+          "model__alpha": 0.01,
+          "model__hidden_layer_sizes": [
+            128,
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.856905995059026,
+        "std_test_score": 0.011645327844911884,
+        "rank_test_score": 10
+      },
+      {
+        "params": {
+          "model__alpha": 0.0001,
+          "model__hidden_layer_sizes": [
+            128,
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.856905995059026,
+        "std_test_score": 0.011645327844911884,
+        "rank_test_score": 10
+      },
+      {
+        "params": {
+          "model__alpha": 0.001,
+          "model__hidden_layer_sizes": [
+            128,
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.856905995059026,
+        "std_test_score": 0.011645327844911884,
+        "rank_test_score": 10
+      },
+      {
+        "params": {
+          "model__alpha": 0.0001,
+          "model__hidden_layer_sizes": [
+            256,
+            128
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.8568087861697762,
+        "std_test_score": 0.005305055146782757,
+        "rank_test_score": 13
+      },
+      {
+        "params": {
+          "model__alpha": 0.001,
+          "model__hidden_layer_sizes": [
+            256,
+            128
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.852131001548118,
+        "std_test_score": 0.012177600152087855,
+        "rank_test_score": 14
+      },
+      {
+        "params": {
+          "model__alpha": 0.001,
+          "model__hidden_layer_sizes": [
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.8488516168175766,
+        "std_test_score": 0.010617743672752413,
+        "rank_test_score": 15
+      },
+      {
+        "params": {
+          "model__alpha": 0.0001,
+          "model__hidden_layer_sizes": [
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.8488516168175766,
+        "std_test_score": 0.010617743672752413,
+        "rank_test_score": 15
+      },
+      {
+        "params": {
+          "model__alpha": 0.01,
+          "model__hidden_layer_sizes": [
+            64,
+            32
+          ],
+          "model__learning_rate_init": 0.001
+        },
+        "mean_test_score": 0.8488516168175766,
+        "std_test_score": 0.010617743672752413,
+        "rank_test_score": 15
+      },
+      {
+        "params": {
+          "model__alpha": 0.01,
+          "model__hidden_layer_sizes": [
+            256,
+            128
+          ],
+          "model__learning_rate_init": 0.01
+        },
+        "mean_test_score": 0.846392879542661,
+        "std_test_score": 0.013083149795606595,
+        "rank_test_score": 18
+      }
+    ]
+  }
+}

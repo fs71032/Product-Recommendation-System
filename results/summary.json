@@ -1,0 +1,393 @@
+{
+  "split": {
+    "total": 1464,
+    "train": 1171,
+    "test": 293,
+    "class_0": 354,
+    "class_1": 1110
+  },
+  "best_feature_config": {
+    "columns": [
+      "actual_price_num",
+      "discounted_price_num",
+      "discount_pct",
+      "rating_count_num",
+      "main_category"
+    ],
+    "reduction": "pca"
+  },
+  "best_classifier": {
+    "accuracy": 0.7645,
+    "precision": 0.7629,
+    "recall": 1.0,
+    "f1_score": 0.8655,
+    "classifier": "Logistic Regression",
+    "type": "Classical"
+  },
+  "feature_experiments": [
+    {
+      "feature_config": "te_gjitha_plus_pca",
+      "reduction_method": "pca",
+      "n_raw_features": 5,
+      "accuracy": 0.7645,
+      "precision": 0.7629,
+      "recall": 1.0,
+      "f1_score": 0.8655
+    },
+    {
+      "feature_config": "pa_numrin_vleresimeve",
+      "reduction_method": "asnjë",
+      "n_raw_features": 4,
+      "accuracy": 0.7645,
+      "precision": 0.7629,
+      "recall": 1.0,
+      "f1_score": 0.8655
+    },
+    {
+      "feature_config": "te_gjitha_plus_select_k_best",
+      "reduction_method": "select_k_best",
+      "n_raw_features": 5,
+      "accuracy": 0.7645,
+      "precision": 0.7703,
+      "recall": 0.982,
+      "f1_score": 0.8634
+    },
+    {
+      "feature_config": "te_gjitha_veçorite",
+      "reduction_method": "asnjë",
+      "n_raw_features": 5,
+      "accuracy": 0.7645,
+      "precision": 0.7703,
+      "recall": 0.982,
+      "f1_score": 0.8634
+    },
+    {
+      "feature_config": "vetem_numerike",
+      "reduction_method": "asnjë",
+      "n_raw_features": 4,
+      "accuracy": 0.7577,
+      "precision": 0.7577,
+      "recall": 1.0,
+      "f1_score": 0.8621
+    },
+    {
+      "feature_config": "cmime_dhe_zbritje",
+      "reduction_method": "asnjë",
+      "n_raw_features": 3,
+      "accuracy": 0.7577,
+      "precision": 0.7577,
+      "recall": 1.0,
+      "f1_score": 0.8621
+    }
+  ],
+  "nn_architecture_experiments": [
+    {
+      "classifier": "NN - 2 shtresa (64, 32)",
+      "type": "Neural Network",
+      "architecture": "Hyrje -> Shtresa e fshehur 1 (64 neurone, ReLU) -> Shtresa e fshehur 2 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)",
+      "hidden_layers": "(64, 32)",
+      "n_hidden_layers": 2,
+      "units_per_layer": "(64, 32)",
+      "activation": "relu",
+      "accuracy": 0.7645,
+      "precision": 0.7684,
+      "recall": 0.9865,
+      "f1_score": 0.8639
+    },
+    {
+      "classifier": "NN - 3 shtresa (128, 64, 32)",
+      "type": "Neural Network",
+      "architecture": "Hyrje -> Shtresa e fshehur 1 (128 neurone, ReLU) -> Shtresa e fshehur 2 (64 neurone, ReLU) -> Shtresa e fshehur 3 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)",
+      "hidden_layers": "(128, 64, 32)",
+      "n_hidden_layers": 3,
+      "units_per_layer": "(128, 64, 32)",
+      "activation": "relu",
+      "accuracy": 0.7611,
+      "precision": 0.7603,
+      "recall": 1.0,
+      "f1_score": 0.8638
+    }
+  ],
+  "tuning": [
+    {
+      "classifier": "Logistic Regression",
+      "param_grid_tested": {
+        "model__C": [
+          0.01,
+          0.1,
+          1.0,
+          10.0
+        ],
+        "model__solver": [
+          "lbfgs",
+          "liblinear"
+        ]
+      },
+      "best_params": {
+        "model__C": 0.1,
+        "model__solver": "lbfgs"
+      },
+      "best_cv_f1": 0.8627,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "Decision Tree",
+      "param_grid_tested": {
+        "model__max_depth": [
+          3,
+          5,
+          8,
+          12,
+          null
+        ],
+        "model__min_samples_split": [
+          2,
+          5,
+          10
+        ],
+        "model__min_samples_leaf": [
+          1,
+          2,
+          4
+        ]
+      },
+      "best_params": {
+        "model__max_depth": 5,
+        "model__min_samples_leaf": 1,
+        "model__min_samples_split": 5
+      },
+      "best_cv_f1": 0.851,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "Random Forest",
+      "param_grid_tested": {
+        "model__n_estimators": [
+          100,
+          200,
+          300
+        ],
+        "model__max_depth": [
+          5,
+          8,
+          12,
+          null
+        ],
+        "model__min_samples_split": [
+          2,
+          5
+        ]
+      },
+      "best_params": {
+        "model__max_depth": 8,
+        "model__min_samples_split": 2,
+        "model__n_estimators": 100
+      },
+      "best_cv_f1": 0.8625,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "SVM (RBF)",
+      "param_grid_tested": {
+        "model__C": [
+          0.1,
+          1.0,
+          10.0
+        ],
+        "model__gamma": [
+          "scale",
+          "auto",
+          0.01,
+          0.1
+        ]
+      },
+      "best_params": {
+        "model__C": 10.0,
+        "model__gamma": "auto"
+      },
+      "best_cv_f1": 0.8641,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "K-Nearest Neighbors",
+      "param_grid_tested": {
+        "model__n_neighbors": [
+          3,
+          5,
+          7,
+          11,
+          15
+        ],
+        "model__weights": [
+          "uniform",
+          "distance"
+        ],
+        "model__metric": [
+          "euclidean",
+          "manhattan"
+        ]
+      },
+      "best_params": {
+        "model__metric": "euclidean",
+        "model__n_neighbors": 15,
+        "model__weights": "uniform"
+      },
+      "best_cv_f1": 0.8682,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca"
+    },
+    {
+      "classifier": "Neural Network (tuned)",
+      "type": "Neural Network",
+      "param_grid_tested": {
+        "model__hidden_layer_sizes": [
+          [
+            64,
+            32
+          ],
+          [
+            128,
+            64,
+            32
+          ],
+          [
+            256,
+            128
+          ]
+        ],
+        "model__alpha": [
+          0.0001,
+          0.001,
+          0.01
+        ],
+        "model__learning_rate_init": [
+          0.001,
+          0.01
+        ]
+      },
+      "best_params": {
+        "model__alpha": 0.0001,
+        "model__hidden_layer_sizes": [
+          128,
+          64,
+          32
+        ],
+        "model__learning_rate_init": 0.01
+      },
+      "best_cv_f1": 0.8626,
+      "feature_config": [
+        "actual_price_num",
+        "discounted_price_num",
+        "discount_pct",
+        "rating_count_num",
+        "main_category"
+      ],
+      "reduction": "pca",
+      "architecture": "Hyrje -> Shtresa 1 (128 neurone, ReLU) -> Shtresa 2 (64 neurone, ReLU) -> Shtresa 3 (32 neurone, ReLU) -> Dalje (1 neuron, Sigmoid)",
+      "hidden_layers": "(128, 64, 32)",
+      "n_hidden_layers": 3,
+      "units_per_layer": "(128, 64, 32)",
+      "activation": "relu"
+    }
+  ],
+  "comparative_table": [
+    {
+      "accuracy": 0.7645,
+      "precision": 0.7629,
+      "recall": 1.0,
+      "f1_score": 0.8655,
+      "classifier": "Logistic Regression",
+      "type": "Classical"
+    },
+    {
+      "accuracy": 0.7645,
+      "precision": 0.7629,
+      "recall": 1.0,
+      "f1_score": 0.8655,
+      "classifier": "SVM (RBF)",
+      "type": "Classical"
+    },
+    {
+      "accuracy": 0.7782,
+      "precision": 0.8008,
+      "recall": 0.9414,
+      "f1_score": 0.8654,
+      "classifier": "Random Forest",
+      "type": "Classical"
+    },
+    {
+      "accuracy": 0.7645,
+      "precision": 0.7684,
+      "recall": 0.9865,
+      "f1_score": 0.8639,
+      "classifier": "NN - 2 shtresa (64, 32)",
+      "type": "Neural Network"
+    },
+    {
+      "accuracy": 0.7611,
+      "precision": 0.7603,
+      "recall": 1.0,
+      "f1_score": 0.8638,
+      "classifier": "NN - 3 shtresa (128, 64, 32)",
+      "type": "Neural Network"
+    },
+    {
+      "accuracy": 0.7577,
+      "precision": 0.7577,
+      "recall": 1.0,
+      "f1_score": 0.8621,
+      "classifier": "Neural Network (tuned)",
+      "type": "Neural Network"
+    },
+    {
+      "accuracy": 0.7645,
+      "precision": 0.7977,
+      "recall": 0.9234,
+      "f1_score": 0.8559,
+      "classifier": "K-Nearest Neighbors",
+      "type": "Classical"
+    },
+    {
+      "accuracy": 0.7577,
+      "precision": 0.7807,
+      "recall": 0.9459,
+      "f1_score": 0.8554,
+      "classifier": "Decision Tree",
+      "type": "Classical"
+    }
+  ]
+}

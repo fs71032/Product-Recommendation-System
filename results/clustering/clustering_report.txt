@@ -1,0 +1,64 @@
+RAPORT GRUPIMI (CLUSTERING) - DATASET AMAZON
+=======================================================
+
+1. METODOLOGJIA
+   - Mostra: 1464 produkte
+   - Etiketat (high_rating) u hoqen PARA grupimit
+   - Veçoritë: çmim, zbritje, rating_count, kategoria
+   - Parapërpunim: StandardScaler + OneHotEncoder
+
+2. ALGORITMET E PËRDORUR
+   a) K-Means: n_clusters=2..6, init=k-means++/random
+   b) Grupim aglomerativ: n_clusters=2..5, linkage=ward/complete/average
+
+3. PARAMETRAT E EKSPERIMENTUAR
+   - K-Means k=2 k-means++: Silhouette=0.5507, ARI=-0.0561, NMI=0.022
+   - K-Means k=2 random: Silhouette=0.5507, ARI=-0.0561, NMI=0.022
+   - K-Means k=3 k-means++: Silhouette=0.5669, ARI=-0.0729, NMI=0.0279
+   - K-Means k=3 random: Silhouette=0.5669, ARI=-0.0729, NMI=0.0279
+   - K-Means k=4 k-means++: Silhouette=0.3123, ARI=-0.028, NMI=0.0192
+   - K-Means k=4 random: Silhouette=0.3124, ARI=-0.028, NMI=0.0183
+   - K-Means k=5 k-means++: Silhouette=0.3256, ARI=-0.0264, NMI=0.0133
+   - K-Means k=5 random: Silhouette=0.3065, ARI=-0.0099, NMI=0.0318
+   - K-Means k=6 k-means++: Silhouette=0.3296, ARI=-0.0109, NMI=0.0246
+   - K-Means k=6 random: Silhouette=0.3063, ARI=-0.0091, NMI=0.0217
+   - Grupim aglomerativ k=2 ward: Silhouette=0.6425, ARI=-0.0289, NMI=0.0089
+   - Grupim aglomerativ k=2 complete: Silhouette=0.6517, ARI=-0.0318, NMI=0.0126
+   - Grupim aglomerativ k=2 average: Silhouette=0.8416, ARI=-0.0009, NMI=0.0007
+   - Grupim aglomerativ k=3 ward: Silhouette=0.2649, ARI=-0.0068, NMI=0.0061
+   - Grupim aglomerativ k=3 complete: Silhouette=0.6408, ARI=-0.0319, NMI=0.0127
+
+4. EFEKTI I PARAMETRAVE
+   - Silhouette më i mirë: Grupim aglomerativ k=2 (Silhouette=0.8416)
+   - Përputhja më e mirë me klasa: Grupim aglomerativ k=2 (ARI=-0.0009, NMI=0.0007)
+   - init=k-means++ zakonisht jep grupe më të balancuara se random
+   - linkage=ward (K-Means / grupim aglomerativ) funksionon mire me veçori te shkallëzuara
+   - k=2 përputhet me klasat binare (rating i lartë/ulët) por grupimet
+     kapin edhe struktura çmimi/kategori, jo vetëm rating
+
+5. KRAHASIMI ME ETIKETAT E VËRTETA
+   Metrikat: ARI (1= përputhje perfekte), NMI, Homogeneity, Completeness
+   ARI maksimal i arritur: -0.0009
+   NMI maksimal: 0.0318
+   Përputhja me klasa NUK është e lartë — grupimet bazohen në çmim/kategori,
+   ndërsa etiketa varet nga rating. Kjo tregon që struktura e produkteve
+   nuk përputhet plotësisht me vlerësimin e lartë/ulët.
+
+6. PROFILI I GRUPEVE (K-Means më i mirë)
+   Grupi 0: n=1306, cmim mesatar=2905.48, zbritje mes=49.08%, kategori=Computers&Accessories
+   Grupi 1: n=42, cmim mesatar=2410.17, zbritje mes=47.45%, kategori=Electronics
+   Grupi 2: n=116, cmim mesatar=35160.56, zbritje mes=32.47%, kategori=Electronics
+
+7. GJETJE DHE NJOHURI
+   - Grupimet zbulojnë segmente produktesh (kabllo, TV, HDMI) bazuar në kategori/çmim
+   - Produktet me rating të lartë janë të shpërndara në shumë grupe — rating
+     nuk është faktor dominues i grupimit
+   - Grup i papritur: produkte të shtrenjta dhe të lira mund të bien në të njëjtin
+     grup nëse kanë kategori të ngjashme dhe zbritje të ngjashme
+   - k=4..5 ndan më mirë kategori produktesh (TV vs kabllo vs aksesorë)
+
+8. VIZUALIZIMET
+   - elbow_plot.png: zgjedhja e k optimal
+   - pca_kmeans_best.png / pca_grupim_aglomerativ.png: grupimet vs etiketat
+   - crosstab_*.png: shpërndarja e klasave reale brenda grupeve
+   - experiment_comparison.png: krahasimi i parametrave
