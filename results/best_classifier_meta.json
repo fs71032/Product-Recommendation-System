@@ -1,0 +1,12 @@
+{
+  "classifier": "Logistic Regression",
+  "feature_columns": [
+    "actual_price_num",
+    "discounted_price_num",
+    "discount_pct",
+    "rating_count_num",
+    "main_category"
+  ],
+  "reduction": "pca",
+  "f1_score": 0.8655
+}

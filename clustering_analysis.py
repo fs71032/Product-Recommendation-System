@@ -1,6 +1,13 @@
+"""
+Analiza e grupimit (clustering) mbi datasetin Amazon.
+
+Etiketat e klasës hiqen para grupimit dhe përdoren vetëm për vlerësim pas grupimit.
+"""
+
 from __future__ import annotations
 
 import json
+import os
 import warnings
 from pathlib import Path
 
@@ -430,4 +437,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

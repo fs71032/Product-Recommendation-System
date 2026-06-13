@@ -1,4 +1,4 @@
-"""Ekzekuton te dy skriptet kryesore te projektit."""
+
 
 from __future__ import annotations
 
@@ -7,7 +7,11 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-SCRIPTS = ["classifiers_evaluation.py", "clustering_analysis.py"]
+SCRIPTS = [
+    "classifiers_evaluation.py",
+    "clustering_analysis.py",
+    "recommendations.py",
+]
 
 
 def main() -> None:

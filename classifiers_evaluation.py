@@ -1,9 +1,21 @@
+"""
+Vlerësimi i klasifikuesve mbi datasetin Amazon.
+
+Përfshin:
+- Ndarje train/test (stratified)
+- Parapërpunim (StandardScaler, OneHotEncoder)
+- Eksperimente zgjedhje/reduktimi veçorish
+- Rregullim hiperparametrash (GridSearchCV) për çdo klasifikues
+- Rrjet neuronal (MLPClassifier) me dy arkitektura
+"""
+
 from __future__ import annotations
 
 import json
 import warnings
 from pathlib import Path
 
+import joblib
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -46,7 +58,6 @@ CV_FOLDS = 5
 NUMERIC_ALL = NUMERIC_FEATURES
 CATEGORICAL = CATEGORICAL_FEATURES
 
-
 FEATURE_SETS: dict[str, list[str]] = {
     "te_gjitha_veçorite": NUMERIC_ALL + CATEGORICAL,
     "vetem_numerike": NUMERIC_ALL.copy(),
@@ -58,7 +69,6 @@ FEATURE_SETS: dict[str, list[str]] = {
         "main_category",
     ],
 }
-
 
 NN_ARCHITECTURES: dict[str, dict] = {
     "NN - 2 shtresa (64, 32)": {
@@ -81,6 +91,7 @@ NN_ARCHITECTURES: dict[str, dict] = {
         ),
     },
 }
+
 
 def build_preprocessor(feature_cols: list[str]) -> ColumnTransformer:
     numeric = [c for c in feature_cols if c in NUMERIC_ALL]
@@ -231,8 +242,9 @@ def run_nn_architecture_experiments(
     y_test,
     feature_cols: list[str],
     reduction: str | None,
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, dict[str, Pipeline]]:
     rows: list[dict] = []
+    models: dict[str, Pipeline] = {}
 
     for arch_name, arch in NN_ARCHITECTURES.items():
         pipeline = make_pipeline(
@@ -241,6 +253,7 @@ def run_nn_architecture_experiments(
             reduction,
         )
         pipeline.fit(X_train[feature_cols], y_train)
+        models[arch_name] = pipeline
         y_pred = pipeline.predict(X_test[feature_cols])
         metrics = evaluate(y_test, y_pred)
         save_confusion_matrix(arch_name, confusion_matrix(
@@ -259,7 +272,7 @@ def run_nn_architecture_experiments(
             }
         )
 
-    return pd.DataFrame(rows).sort_values("f1_score", ascending=False)
+    return pd.DataFrame(rows).sort_values("f1_score", ascending=False), models
 
 
 def tune_neural_network(
@@ -338,6 +351,24 @@ def tune_classifier(
         ["params", "mean_test_score", "std_test_score", "rank_test_score"]
     ].sort_values("rank_test_score")
     return grid.best_estimator_, tuning_info, cv_results.to_dict(orient="records")
+
+
+def save_best_classifier(
+    model: Pipeline,
+    name: str,
+    feature_cols: list[str],
+    reduction: str | None,
+    f1_score: float,
+) -> None:
+    joblib.dump(model, RESULTS_DIR / "best_classifier.joblib")
+    meta = {
+        "classifier": name,
+        "feature_columns": feature_cols,
+        "reduction": reduction or "asnjë",
+        "f1_score": round(f1_score, 4),
+    }
+    with open(RESULTS_DIR / "best_classifier_meta.json", "w", encoding="utf-8") as f:
+        json.dump(meta, f, indent=2, ensure_ascii=False)
 
 
 def save_confusion_matrix(name: str, cm, output_dir: Path) -> None:
@@ -558,7 +589,7 @@ def main() -> None:
         f"\nKonfigurimi më i mirë i veçorive: {best_cols}, reduktim={best_reduction}\n")
 
     print("=== Faza 2: Eksperimente arkitekturash rrjeti neuronal ===")
-    nn_arch_df = run_nn_architecture_experiments(
+    nn_arch_df, nn_arch_models = run_nn_architecture_experiments(
         X_train, y_train, X_test, y_test, best_cols, best_reduction
     )
     nn_arch_df.to_csv(RESULTS_DIR / "nn_architecture_results.csv", index=False)
@@ -578,12 +609,14 @@ def main() -> None:
     cv_details: dict = {}
     final_metrics: list[dict] = []
     reports: dict[str, str] = {}
+    trained_models: dict[str, Pipeline] = dict(nn_arch_models)
 
     for name in get_base_estimators():
         print(f"Tuning: {name}...")
         best_model, tuning_info, cv_detail = tune_classifier(
             name, X_train, y_train, best_cols, best_reduction
         )
+        trained_models[name] = best_model
         tuning_records.append(tuning_info)
         cv_details[name] = cv_detail
 
@@ -617,6 +650,7 @@ def main() -> None:
     nn_model, nn_tuning, nn_cv = tune_neural_network(
         X_train, y_train, best_cols, best_reduction
     )
+    trained_models["Neural Network (tuned)"] = nn_model
     tuning_records.append(nn_tuning)
     cv_details["Neural Network"] = nn_cv
 
@@ -687,6 +721,21 @@ def main() -> None:
     with open(RESULTS_DIR / "summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
+    winner = final_df.iloc[0]
+    winner_name = winner["classifier"]
+    winner_model = trained_models.get(winner_name)
+    if winner_model is None:
+        print(f"\nParalajmërim: modeli '{winner_name}' nuk u gjet për ruajtje.")
+    else:
+        save_best_classifier(
+            winner_model,
+            winner_name,
+            best_cols,
+            best_reduction,
+            float(winner["f1_score"]),
+        )
+        print(f"\nModeli më i mirë u ruajt: {winner_name} -> best_classifier.joblib")
+
     print("\nRezultatet u ruajtën në:", RESULTS_DIR)
     print("\nRenditja finale (test set):")
     print(final_df.to_string(index=False))
@@ -694,6 +743,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+
 
 
 

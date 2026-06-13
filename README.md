@@ -1,6 +1,6 @@
 # Product Recommendation System — Mësimit Makinor
 
-Projekt për analizën e produkteve Amazon me **klasifikim**, **rrjet neuronal** dhe **grupim (clustering)**.
+Projekt për analizën e produkteve Amazon me **klasifikim**, **rrjet neuronal**, **grupim (clustering)** dhe **rekomandime produktesh**.
 
 Dataseti: `data/amazon.csv` (~1.465 produkte elektronike nga Amazon India).
 
@@ -102,7 +102,22 @@ python clustering_analysis.py
 
 ---
 
-### Ekzekuto të dyja njëherësh
+### Rekomandime produktesh
+
+```powershell
+python recommendations.py
+```
+
+**Çfarë bën:**
+- Rekomandon produkte **të ngjashme** (content-based, cosine similarity)
+- Rekomandon produkte nga **i njëjti cluster** K-Means
+- Liston **top produkte** sipas kategorisë
+
+**Rezultatet:** `results/recommendations.csv`, `results/recommendations_summary.json`
+
+---
+
+### Ekzekuto të gjitha skriptet njëherësh
 
 ```powershell
 python run_all.py
@@ -121,7 +136,8 @@ ProductRecommendationSystem/
 ├── data_utils.py               # Ngarkim dhe parapërpunim i përbashkët
 ├── classifiers_evaluation.py   # Klasifikuesit + rrjeti neuronal
 ├── clustering_analysis.py      # Grupimi
-├── run_all.py                  # Ekzekuton të dy skriptet
+├── recommendations.py          # Rekomandime produktesh
+├── run_all.py                  # Ekzekuton të gjitha skriptet
 ├── requirements.txt            # Varësitë Python
 └── README.md                   # Ky skedar
 ```
