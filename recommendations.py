@@ -12,9 +12,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from plot_helpers import cleanup_matplotlib, configure_matplotlib, save_plot
+
+configure_matplotlib()
+import matplotlib.pyplot as plt
 import joblib
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.cluster import KMeans
 from sklearn.neighbors import NearestNeighbors
 
@@ -22,6 +27,7 @@ from data_utils import DEFAULT_DATA_PATH, FEATURE_COLUMNS, load_raw_dataframe, p
 
 DATA_PATH = DEFAULT_DATA_PATH
 RESULTS_DIR = Path(__file__).parent / "results"
+RECOMMENDATIONS_VIZ_DIR = RESULTS_DIR / "recommendations"
 CLASSIFIER_MODEL_PATH = RESULTS_DIR / "best_classifier.joblib"
 CLASSIFIER_META_PATH = RESULTS_DIR / "best_classifier_meta.json"
 RANDOM_STATE = 42
@@ -133,7 +139,6 @@ def recommend_similar(
         method="content_based",
         source_product_id=product_id,
     )
-
 
 def recommend_from_cluster(
     product_id: str,
@@ -294,6 +299,153 @@ def recommend_top_in_category(
     return pd.DataFrame(rows)
 
 
+def _short_label(name: str, max_len: int = 42) -> str:
+    text = str(name).strip()
+    if len(text) <= max_len:
+        return text
+    return text[: max_len - 3] + "..."
+
+
+def plot_ratings_by_method(combined: pd.DataFrame, output_dir: Path) -> None:
+    methods = combined["method"].unique().tolist()
+    n_methods = len(methods)
+    n_cols = min(2, n_methods)
+    n_rows = (n_methods + n_cols - 1) // n_cols
+    fig, axes = plt.subplots(
+        n_rows,
+        n_cols,
+        figsize=(10 * n_cols, 4.5 * n_rows),
+        squeeze=False,
+    )
+    flat_axes = axes.flatten()
+
+    for ax, method in zip(flat_axes, methods):
+        subset = combined[combined["method"] == method].sort_values("rank").copy()
+        subset["product_label"] = subset.apply(
+            lambda row: f"#{int(row['rank'])} {_short_label(row['recommended_product_name'])}",
+            axis=1,
+        )
+
+        sns.barplot(
+            data=subset,
+            y="product_label",
+            x="rating",
+            ax=ax,
+            color="steelblue",
+            order=subset["product_label"].tolist(),
+        )
+
+        x_min = max(0, subset["rating"].min() - 0.4)
+        x_max = min(5.5, subset["rating"].max() + 0.5)
+        if x_max - x_min < 0.6:
+            x_min = max(0, x_min - 0.2)
+            x_max = min(5.5, x_max + 0.2)
+        ax.set_xlim(x_min, x_max)
+
+        for bar, (_, row) in zip(ax.patches, subset.iterrows()):
+            ax.text(
+                bar.get_width() + 0.03,
+                bar.get_y() + bar.get_height() / 2,
+                f"{row['rating']:.1f}",
+                va="center",
+                ha="left",
+                fontsize=8,
+            )
+
+        ax.set_title(method.replace("_", " "), fontsize=11)
+        ax.set_xlabel("Rating")
+        ax.set_ylabel("Produkti i rekomanduar")
+        ax.tick_params(axis="y", labelsize=7)
+
+    for ax in flat_axes[n_methods:]:
+        ax.axis("off")
+
+    plt.suptitle("Rating i produkteve te rekomanduara (sipas metodes)", fontsize=13)
+    plt.tight_layout()
+    save_plot(output_dir / "recommendation_ratings_by_method.png")
+
+
+def plot_method_comparison(combined: pd.DataFrame, output_dir: Path) -> None:
+    summary = (
+        combined.groupby("method", as_index=False)
+        .agg(avg_rating=("rating", "mean"), avg_score=("score", "mean"))
+        .sort_values("avg_rating", ascending=False)
+    )
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    sns.barplot(
+        data=summary,
+        x="method",
+        y="avg_rating",
+        ax=axes[0],
+        hue="method",
+        palette="viridis",
+        legend=False,
+    )
+    axes[0].set_title("Rating mesatar i rekomandimeve")
+    axes[0].set_xlabel("Metoda")
+    axes[0].set_ylabel("Rating mesatar")
+    axes[0].set_ylim(0, 5.5)
+    axes[0].tick_params(axis="x", rotation=20)
+
+    sns.barplot(
+        data=summary,
+        x="method",
+        y="avg_score",
+        ax=axes[1],
+        hue="method",
+        palette="magma",
+        legend=False,
+    )
+    axes[1].set_title("Score mesatar i rekomandimeve")
+    axes[1].set_xlabel("Metoda")
+    axes[1].set_ylabel("Score mesatar")
+    axes[1].tick_params(axis="x", rotation=20)
+
+    plt.suptitle("Krahasimi i metodave te rekomandimit", fontsize=13)
+    plt.tight_layout()
+    save_plot(output_dir / "recommendation_method_comparison.png")
+
+
+def plot_classifier_scores(classifier_df: pd.DataFrame, output_dir: Path) -> None:
+    if classifier_df.empty or "score" not in classifier_df.columns:
+        return
+
+    plot_df = classifier_df.sort_values("rank").copy()
+    plot_df["rank_label"] = plot_df["rank"].apply(lambda r: f"#{int(r)}")
+
+    plt.figure(figsize=(8, 5))
+    sns.barplot(
+        data=plot_df,
+        x="rank_label",
+        y="score",
+        hue="predicted_high_rating",
+        palette={0: "lightcoral", 1: "seagreen"},
+        dodge=False,
+        order=plot_df["rank_label"].tolist(),
+    )
+    plt.title("Rekomandime me klasifikues: probabiliteti i high_rating")
+    plt.xlabel("Renditja e rekomandimit")
+    plt.ylabel("Score / probabilitet")
+    plt.tight_layout()
+    save_plot(output_dir / "recommendation_classifier_scores.png")
+
+
+def save_recommendation_plots(
+    combined: pd.DataFrame,
+    classifier_df: pd.DataFrame,
+    output_dir: Path,
+) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    if combined.empty:
+        return
+
+    plot_ratings_by_method(combined, output_dir)
+    plot_method_comparison(combined, output_dir)
+    plot_classifier_scores(classifier_df, output_dir)
+
+
 def main() -> None:
     RESULTS_DIR.mkdir(exist_ok=True)
 
@@ -380,8 +532,17 @@ def main() -> None:
     with open(RESULTS_DIR / "recommendations_summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
+    save_recommendation_plots(combined, classifier_df, RECOMMENDATIONS_VIZ_DIR)
+
     print(f"\nRezultatet u ruajtën në: {RESULTS_DIR / 'recommendations.csv'}")
+    print(f"Vizualizimet u ruajtën në: {RECOMMENDATIONS_VIZ_DIR}")
+    cleanup_matplotlib()
 
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
