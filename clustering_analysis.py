@@ -155,6 +155,7 @@ def plot_elbow(X_scaled: np.ndarray, output_dir: Path) -> None:
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig(output_dir / "elbow_plot.png", dpi=150)
+    plt.show()
     plt.close()
 
 
@@ -190,6 +191,7 @@ def plot_pca_scatter(
     plt.suptitle("PCA 2D - Grupimet vs Etiketat Reale", fontsize=13)
     plt.tight_layout()
     plt.savefig(output_dir / filename, dpi=150)
+    plt.show()
     plt.close()
 
 
@@ -213,6 +215,7 @@ def plot_cluster_distribution(
     plt.tight_layout()
     safe = algorithm.lower().replace(" ", "_")
     plt.savefig(output_dir / f"crosstab_{safe}.png", dpi=150)
+    plt.show()
     plt.close()
 
 
@@ -252,6 +255,7 @@ def plot_experiment_comparison(exp_df: pd.DataFrame, output_dir: Path) -> None:
 
     plt.tight_layout()
     plt.savefig(output_dir / "experiment_comparison.png", dpi=150)
+    plt.show()
     plt.close()
 
 

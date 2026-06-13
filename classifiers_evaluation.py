@@ -356,6 +356,7 @@ def save_confusion_matrix(name: str, cm, output_dir: Path) -> None:
     plt.tight_layout()
     safe = name.lower().replace(" ", "_").replace("(", "").replace(")", "")
     plt.savefig(output_dir / f"confusion_matrix_{safe}.png", dpi=150)
+    plt.show()
     plt.close()
 
 
@@ -368,6 +369,7 @@ def save_bar_plot(df: pd.DataFrame, x: str, y: str, title: str, filename: str) -
     plt.ylim(0, 1)
     plt.tight_layout()
     plt.savefig(RESULTS_DIR / filename, dpi=150)
+    plt.show()
     plt.close()
 
 
