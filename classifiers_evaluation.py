@@ -102,3 +102,69 @@ def build_preprocessor(feature_cols: list[str]) -> ColumnTransformer:
 
 
     return ColumnTransformer(transformers=transformers)
+
+def build_reduction_step(method: str | None):
+    if method == "select_k_best":
+        return ("selector", SelectKBest(score_func=f_classif, k=10))
+    if method == "pca":
+        return ("pca", PCA(n_components=0.95, random_state=RANDOM_STATE))
+    return None
+
+
+def make_pipeline(
+    feature_cols: list[str],
+    estimator,
+    reduction: str | None = None,
+) -> Pipeline:
+    steps: list = [("preprocess", build_preprocessor(feature_cols))]
+    reduction_step = build_reduction_step(reduction)
+    if reduction_step:
+        steps.append(reduction_step)
+    steps.append(("model", estimator))
+    return Pipeline(steps)
+
+
+def get_base_estimators() -> dict:
+    return {
+        "Logistic Regression": LogisticRegression(
+            max_iter=2000, random_state=RANDOM_STATE
+        ),
+        "Decision Tree": DecisionTreeClassifier(random_state=RANDOM_STATE),
+        "Random Forest": RandomForestClassifier(random_state=RANDOM_STATE),
+        "SVM (RBF)": SVC(kernel="rbf", random_state=RANDOM_STATE),
+        "K-Nearest Neighbors": KNeighborsClassifier(),
+    }
+
+
+def get_param_grids() -> dict[str, dict]:
+    return {
+        "Logistic Regression": {
+            "model__C": [0.01, 0.1, 1.0, 10.0],
+            "model__solver": ["lbfgs", "liblinear"],
+        },
+        "Decision Tree": {
+            "model__max_depth": [3, 5, 8, 12, None],
+            "model__min_samples_split": [2, 5, 10],
+            "model__min_samples_leaf": [1, 2, 4],
+        },
+        "Random Forest": {
+            "model__n_estimators": [100, 200, 300],
+            "model__max_depth": [5, 8, 12, None],
+            "model__min_samples_split": [2, 5],
+        },
+        "SVM (RBF)": {
+            "model__C": [0.1, 1.0, 10.0],
+            "model__gamma": ["scale", "auto", 0.01, 0.1],
+        },
+        "K-Nearest Neighbors": {
+            "model__n_neighbors": [3, 5, 7, 11, 15],
+            "model__weights": ["uniform", "distance"],
+            "model__metric": ["euclidean", "manhattan"],
+        },
+        "Neural Network": {
+            "model__hidden_layer_sizes": [(64, 32), (128, 64, 32), (256, 128)],
+            "model__alpha": [0.0001, 0.001, 0.01],
+            "model__learning_rate_init": [0.001, 0.01],
+        },
+    }
+
